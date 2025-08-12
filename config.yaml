@@ -1,0 +1,13 @@
+cookie:
+  expiry_days: 30
+  key: some_signature_key
+  name: some_cookie_name
+credentials:
+  usernames:
+    stmk:
+      email: office@stadtkapelle-wy.at
+      failed_login_attempts: 0
+      first_name: STMK
+      last_name: WY
+      logged_in: false
+      password: $2b$12$VEOIuxMdfF5W7HU0v3Iy1e6lc7yVfVirvT9symuGzvuUEPlQPyI/q

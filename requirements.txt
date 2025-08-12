@@ -1,0 +1,7 @@
+streamlit
+sqlalchemy
+pandas
+openpyxl
+streamlit-extras
+streamlit-option-menu
+streamlit_authenticator
