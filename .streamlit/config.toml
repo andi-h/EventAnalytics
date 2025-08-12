@@ -4,5 +4,5 @@ cookieSameSite = "none"
 cookieSecure = true
 
 [browser]
-serverAddress = "konvikt.heap-engineering.at"
+#serverAddress = "konvikt.heap-engineering.at"
 gatherUsageStats = false
