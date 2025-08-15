@@ -2,16 +2,8 @@ import streamlit as st
 from datenbank import SessionLocal, Zutat, ProduktZutat, Fest
 from sqlalchemy.orm import joinedload
 
-def show():
+def show(session, feste, aktuelles_fest):
     st.subheader("🥣 Zutaten zu Produkten zuordnen")
-
-    session = SessionLocal()
-
-    # Aktuelles Fest auswählen
-    feste = session.query(Fest).order_by(Fest.datum.desc()).all()
-    fest_namen = [f"{fest.festtyp.name} ({fest.datum.strftime('%d.%m.%Y')})" for fest in feste]
-    fest_index = st.selectbox("Fest auswählen", options=range(len(feste)), format_func=lambda i: fest_namen[i])
-    aktuelles_fest = feste[fest_index]
 
     # Alle vorherigen Feste sortiert absteigend (außer aktuelles)
     frühere_feste = [f for f in feste if f.datum < aktuelles_fest.datum]

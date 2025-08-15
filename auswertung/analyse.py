@@ -114,21 +114,14 @@ def berechne_kennzahlen(fest_id: int, produkt_filter: list = None, station_filte
         "gewinn_pro_produkt": gewinn_pro_produkt
     }
 
-def show():
+def show(session, feste, aktuelles_fest):
     # Streamlit-Seite: Auswertung
     st.title("📊 Auswertung eines Fests")
-    session = SessionLocal()
-    feste = session.query(Fest).order_by(Fest.datum.desc()).all()
     fest_optionen = {f"{f.festtyp.name}: {f.datum.strftime('%d.%m.%Y')}": f.id for f in feste}
-    session.close()
 
-    col1, col2 = st.columns(2)
-    with col1:
-        hauptfest_name = st.selectbox("Fest auswählen", list(fest_optionen.keys()), key="hauptfest")
-    with col2:
-        vergleich_name = st.selectbox("Vergleich mit Fest (optional)", ["–"] + list(fest_optionen.keys()), key="vergleichfest")
+    vergleich_name = st.selectbox("Vergleich mit Fest (optional)", ["–"] + list(fest_optionen.keys()), key="vergleichfest")
 
-    hauptfest_id = fest_optionen[hauptfest_name]
+    hauptfest_id =  aktuelles_fest.id
     vergleich_id = fest_optionen.get(vergleich_name) if vergleich_name != "–" else None
 
     # Optionaler Produktfilter
@@ -139,15 +132,16 @@ def show():
         stationen = session.query(Bestellung.station).filter(Bestellung.fest_id == hauptfest_id).distinct().all()
         produkt_query = session.query(Bestellung.produkt).filter(Bestellung.fest_id == hauptfest_id)
     
-    session = SessionLocal()
-    station_liste = sorted([s[0] for s in stationen if s[0]])
-    station_filter = st.multiselect("Stationen filtern (optional)", options=station_liste)
-    if station_filter:
-        produkt_query = produkt_query.filter(Bestellung.station.in_(station_filter))
-    produkte = produkt_query.distinct().all()
-    session.close()
-    produkt_liste = sorted([p[0] for p in produkte])
-    produkt_filter = st.multiselect("Produkte filtern (optional)", options=produkt_liste)
+    col1, col2 = st.columns(2)
+    with col1:
+        station_liste = sorted([s[0] for s in stationen if s[0]])
+        station_filter = st.multiselect("Stationen filtern", options=station_liste)
+        if station_filter:
+            produkt_query = produkt_query.filter(Bestellung.station.in_(station_filter))
+    with col2:
+        produkte = produkt_query.distinct().all()
+        produkt_liste = sorted([p[0] for p in produkte])
+        produkt_filter = st.multiselect("Produkte filtern", options=produkt_liste)
 
     if not produkt_filter:
         produkt_filter = None

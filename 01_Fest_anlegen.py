@@ -71,10 +71,19 @@ if login():
                     st.markdown(f"### 🎪 {fest.festtyp.name}")
                     st.markdown(f"📅 {fest.datum.strftime('%d.%m.%Y')}")
                 with col2:
-                    if st.button("🗑️", key=f"delete_{fest.id}"):
-                        session.query(Bestellung).filter_by(fest_id=fest.id).delete()
-                        session.query(Einkauf).filter_by(fest_id=fest.id).delete()
-                        session.delete(fest)
-                        session.commit()
-                        st.rerun()
-            st.markdown("---")
+                    delete_key = f"delete_{fest.id}"
+                    confirm_key = f"confirm_delete_{fest.id}"
+                    if st.button("🗑️", key=delete_key):
+                        st.session_state[confirm_key] = True
+                    if st.session_state.get(confirm_key, False):
+                        st.warning("Möchten Sie dieses Fest wirklich löschen?")
+                        if st.button("Ja, löschen", key=f"confirm_yes_{fest.id}"):
+                            session.query(Bestellung).filter_by(fest_id=fest.id).delete()
+                            session.query(Einkauf).filter_by(fest_id=fest.id).delete()
+                            session.delete(fest)
+                            session.commit()
+                            st.session_state[confirm_key] = False
+                            st.rerun()
+                        if st.button("Abbrechen", key=f"confirm_no_{fest.id}"):
+                            st.session_state[confirm_key] = False
+                st.markdown("---")

@@ -4,11 +4,8 @@ from sqlalchemy.orm import Session
 from datenbank import SessionLocal, Fest, Bestellung, Einkauf
 import altair as alt
 
-def show():
+def show(session, feste, aktuelles_fest):
     st.title("📈 Vergleich der Feste")
-
-    session = SessionLocal()
-    feste = session.query(Fest).order_by(Fest.datum).all()
 
     vergleichsdaten = []
 

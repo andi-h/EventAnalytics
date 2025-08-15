@@ -2,16 +2,8 @@ import streamlit as st
 from datenbank import SessionLocal, Fest, ProduktZutat, Einkauf, Zutat
 from sqlalchemy.orm import joinedload
 
-def show():
+def show(session, feste, aktuelles_fest):
     st.subheader("🛒 Einkäufe für das Fest erfassen")
-
-    session = SessionLocal()
-
-    # Fest auswählen
-    feste = session.query(Fest).order_by(Fest.datum.desc()).all()
-    fest_namen = [f"{fest.festtyp.name} ({fest.datum.strftime('%d.%m.%Y')})" for fest in feste]
-    fest_index = st.selectbox("Fest auswählen", options=range(len(feste)), format_func=lambda i: fest_namen[i])
-    aktuelles_fest = feste[fest_index]
 
     # Zutaten ermitteln, die für das Fest relevant sind (ProduktZutat)
     zutaten_ids = session.query(ProduktZutat.zutat_id).filter_by(fest_id=aktuelles_fest.id).distinct().all()
